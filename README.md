@@ -1,4 +1,4 @@
-# ghpush - A short expect script to simply the "git push origin master" step
+# ghpush - A short expect script to simplify the "git push origin master" step
 
 On UNIX/Linux when running the git command line:
 
