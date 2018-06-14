@@ -1,0 +1,55 @@
+#! /usr/local/bin/expect
+#
+# @(!--#) @(#) ghpush.exp, version 001, 14-june-2018
+#
+# run "git push origin master" and automagically supply
+# username and password if prompted
+#
+
+#
+# Main
+#
+
+# get program/script name
+set progname [file tail $argv0]
+
+# get password from GHPASS
+if {[catch {set password $env(GHPASS)}] != 0} {
+  send_error "$progname: the password environment variable GHPASS is not set\n"
+  exit 1
+}
+
+# make sure the password environment variable contained a non-null string
+if {$password == ""} {
+  send_error "$progname: the password environment variable GHPASS is null\n"
+  exit 1
+}
+
+set username "andycranston"
+
+# kick off the got command
+spawn git push origin master
+
+# loop forever
+while {1} {
+  expect {
+    "Username for 'https://github.com': " {
+      send "$username\r"
+      continue
+    }
+    "Password for 'https://$username@github.com': " {
+      send "$password\r"
+      continue
+    }
+    eof {
+      break
+    }
+    timeout {
+      send_error "\n$progname: something has gone wrong!\n"
+      exit 1
+    }
+  }
+}
+
+# if control gets here then exit success
+exit 0
