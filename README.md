@@ -8,7 +8,7 @@ git push origin master
 
 you can be prompted for your github username and password.
 
-What the `ghpush` script does is automate this by supplying the github
+What the `ghpush` expect script does is automate this by supplying the github
 username and github password.
 
 The github username is extracted from the $HOME/.gitconfig file.
@@ -27,7 +27,7 @@ find here:
 
 * [Set Windows/UNIX/Linux environment variables with a password but keep the password hidden](https://github.com/andycranston/setpw)
 
-Here is a typical run of ghpush:
+Here is a typical run of the `ghpush` expect script:
 
 ```
 $ ghpush
@@ -40,7 +40,9 @@ $
 
 ## Pre-requisites
 
-Tcl and expect must be installed.  The file:
+Tcl and expect must be installed.
+
+The file:
 
 ```
 /usr/local/bin/expect
@@ -48,12 +50,12 @@ Tcl and expect must be installed.  The file:
 
 must be the expect executable or be a link to the expect executable.
 
-I developed this expect script using:
+I developed the `ghpush` expect script using:
 
 * Tcl version 8.6.6
 * expect version 5.45.3
 
-running on Lbuntu.
+running on Lubuntu.
 
 ## Installing
 
@@ -89,7 +91,7 @@ Yes there are many other ways to supply the usernamne and password
 including having the credentials cached or stored using various encryption
 methods.
 
-The `ghpush` expect script is just a differenr approach.
+The `ghpush` expect script is just a different approach.
 
 One advantage of the `ghpush` expect script `is that the github password
 is only stored in the GHPASS environment variable for the duration of
