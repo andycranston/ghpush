@@ -1,10 +1,83 @@
 #! /usr/local/bin/expect
 #
-# @(!--#) @(#) ghpush.exp, version 001, 14-june-2018
+# @(!--#) @(#) ghpush.exp, version 009, 15-june-2018
 #
 # run "git push origin master" and automagically supply
 # username and password if prompted
 #
+
+
+proc getgithubusername {} {
+  global env
+  global progname
+
+  if {[catch {set home $env(HOME)}] != 0} {
+    send_error "$progname: the HOME environment variable is not set\n"
+    exit 1
+  }
+
+  if {$home == ""} {
+    send_error "$progname: the HOME environment variable is null\n"
+    exit 1
+  }
+
+  if {! [file isdirectory $home]} {
+    send_error "$progname: the HOME environment variable does not point to a directory\n"
+    exit 1
+  }
+
+  set gitconfigfilename $home/.gitconfig
+
+  if {! [file isfile $gitconfigfilename]} {
+    send_error "$progname: the git config file \"$gitconfigfilename\" is not a plain file\n"
+    exit 1
+  }
+
+  if {[catch {open $gitconfigfilename "r"} gitconfigfile]} {
+    send_error "$progname: cannot open git config file \"$gitconfigfilename\" for reading\n"
+    exit 1
+  }
+
+  set username ""
+  set inuserstanza 0
+
+  while {[gets $gitconfigfile line] != -1} {
+    set line [string trim $line]
+
+    if {[string length $line] == 0} {
+      continue
+    }
+
+    if {$line == "\[user\]"} {
+      set inuserstanza 1
+      # puts "Now in user stanza"
+      continue
+    }
+
+    if {[string index $line 0] == "\["} {
+      set inuserstanza 0
+      # puts "Now OUT of user stanza"
+      continue
+    }
+
+    if {$inuserstanza} {
+      if {[string range $line 0 6] == "name = "} {
+        # puts "Found name = line"
+        set username [string range $line 7 end]
+        break
+      }
+    }
+
+    # puts "$line"
+  }
+
+  close $gitconfigfile
+
+  # puts "Username=\"$username\""
+
+  return $username
+}
+
 
 #
 # Main
@@ -25,7 +98,13 @@ if {$password == ""} {
   exit 1
 }
 
-set username "andycranston"
+set username [getgithubusername]
+
+if {$username == ""} {
+  send_error "$progname: unable to determine github user name (check \$HOME/.gitconfig file for errors)\n"
+  exit 1
+}
+
 
 # kick off the got command
 spawn git push origin master
