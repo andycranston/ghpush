@@ -1,6 +1,6 @@
 #! /usr/local/bin/expect
 #
-# @(!--#) @(#) ghpush.exp, version 009, 15-june-2018
+# @(!--#) @(#) ghpush.exp, version 010, 15-june-2018
 #
 # run "git push origin master" and automagically supply
 # username and password if prompted
@@ -66,6 +66,11 @@ proc getgithubusername {} {
         set username [string range $line 7 end]
         break
       }
+      if {[string range $line 0 4] == "name="} {
+        # puts "Found name = line"
+        set username [string range $line 5 end]
+        break
+      }
     }
 
     # puts "$line"
@@ -85,6 +90,9 @@ proc getgithubusername {} {
 
 # get program/script name
 set progname [file tail $argv0]
+
+# set a long timeout as response in rural areas like mine can be slow!
+set timeout 60
 
 # get password from GHPASS
 if {[catch {set password $env(GHPASS)}] != 0} {
