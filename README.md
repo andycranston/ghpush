@@ -93,7 +93,7 @@ methods.
 
 The `ghpush` expect script is just a different approach.
 
-One advantage of the `ghpush` expect script `is that the github password
+One advantage of the `ghpush` expect script is that the github password
 is only stored in the GHPASS environment variable for the duration of
 that login session.  As long as you keep the session secure (i.e. do
 not leave your workstation unattended) then your password is safe.
